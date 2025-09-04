@@ -8,4 +8,4 @@ bash start.sh : kegunaanya update script kamu ke versi terbaru yang tersedia tan
 ❍ jadi kalian tunggu apalagi bantu share script atau repositori ini ke teman kalian dan gunakan userbot dengan fitur fitur terbaru yang telah ada 
 ══════════════════════════════════
 𝗔𝗗𝗦
-[belajar nodejs & npm disini saja](https://junofficial354.blogspot.com)
+![belajar nodejs & npm disini saja](https://junofficial354.blogspot.com)
