@@ -71,7 +71,7 @@ if [[ "$confirm" =~ ^[yY]$ ]]; then
     loading "✨ Menyiapkan Userbot"
     sleep 0.5
     echo -e "${GREEN}✅ Semua siap! Menjalankan Userbot...${NC}"
-    python3 bot.py
+    python3 junn.py
 else
     echo -e "${RED}❌ Dibatalkan.${NC}"
     exit 0
