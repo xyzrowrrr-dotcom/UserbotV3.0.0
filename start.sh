@@ -1,78 +1,101 @@
 #!/bin/bash
 
 # =======================
-# Warna-warna keren
+# Colors using tput
 # =======================
-CYAN="\033[0;36m"
-YELLOW="\033[1;33m"
-GREEN="\033[0;32m"
-RED="\033[0;31m"
-MAGENTA="\033[0;35m"
-NC="\033[0m" # reset
+RED=$(tput setaf 1)
+GREEN=$(tput setaf 2)
+YELLOW=$(tput setaf 3)
+CYAN=$(tput setaf 6)
+MAGENTA=$(tput setaf 5)
+WHITE=$(tput setaf 7)
+NC=$(tput sgr0)
 
 # =======================
-# Fungsi animasi titik
+# Animated typing
 # =======================
-loading() {
-    msg=$1
-    echo -ne "${CYAN}${msg}${NC}"
-    for i in {1..3}; do
-        sleep 0.5
-        echo -ne "."
-    done
-    echo -e ""
+type_text() {
+  text="$1"
+  speed=${2:-0.02}
+  for ((i=0;i<${#text};i++)); do
+    echo -n "${text:$i:1}"
+    sleep $speed
+  done
+  echo ""
 }
 
 # =======================
-# Cek file
+# Fancy loading bar
+# =======================
+fancy_bar() {
+  msg="$1"
+  duration="$2"
+  steps=30
+  sleep_per_step=$(awk "BEGIN {print $duration/$steps}")
+  echo -ne "${CYAN}[!]${NC} $msg [>------------------------------] 0%"
+  for ((i=1;i<=steps;i++)); do
+    bar=$(printf "%0.s=" $(seq 1 $i))
+    empty=$(printf "%0.s-" $(seq 1 $((steps-i))))
+    percent=$((i*100/steps))
+    echo -ne "\r${CYAN}[!]${NC} $msg [${bar}${empty}] ${percent}%"
+    sleep $sleep_per_step 2>/dev/null || sleep 0.1
+  done
+  echo -ne "\r${GREEN}[√]${NC} $msg [${bar}] DONE\n"
+}
+
+# =======================
+# Clear screen and start
+# =======================
+clear
+type_text "${MAGENTA}✤ Initializing environment...${NC}" 0.04
+fancy_bar "Scanning system" 1
+fancy_bar "Checking Python installation" 0.5
+
+# =======================
+# Install dependencies
+# =======================
+type_text "${YELLOW}📦 Installing required modules...${NC}" 0.03
+pkg update -y >/dev/null 2>&1
+pkg upgrade -y >/dev/null 2>&1
+pkg install python -y >/dev/null 2>&1
+pkg install python3 -y >/dev/null 2>&1
+pip install -r requirements.txt >/dev/null 2>&1
+fancy_bar "Dependencies installed" 2
+
+# =======================
+# Check main file
 # =======================
 if [ ! -f "junn.py" ]; then
-    echo -e "${RED}[ERROR]${NC} File junn.py tidak ditemukan!"
+    echo -e "${RED}[ERROR]${NC} junn.py not found!"
     exit 1
 fi
 
 # =======================
-# Clear dan animasi awal
+# Interactive explanation
 # =======================
 clear
-loading "🌟 Memeriksa environment"
-sleep 0.5
-loading "📦 Menginstal module Python yang diperlukan"
-pkg update && pkg upgrade -y  >/dev/null 2>&1
-pkg install python -y  >/dev/null 2>&1
-pkg install python3 -y  >/dev/null 2>&1
-pip install -r requirements.txt >/dev/null 2>&1
-sleep 0.5
-clear
+echo -e "${MAGENTA}══════════════════════════════════════════════${NC}"
+type_text "${YELLOW}📌 IMPORTANT INFORMATION:${NC}" 0.03
+echo "- You will need to input your ${GREEN}Telegram number${NC}"
+echo "- Then input ${GREEN}OTP code${NC}"
+echo "- Then input ${GREEN}2FA password (if any)${NC}\n"
+echo "${RED}⚠️ Your inputs will be hidden as you type.${NC}"
+echo "Type carefully and press ENTER."
+type_text "Press ${CYAN}y${NC} to continue." 0.03
+echo -e "${MAGENTA}══════════════════════════════════════════════${NC}\n"
+read -p "✅ Type 'y' to proceed: " confirm
 
 # =======================
-# Penjelasan interaktif
-# =======================
-echo -e "${MAGENTA}══════════════════════════════════════════════${NC}"
-echo -e "${YELLOW}📌 INFORMASI PENTING:${NC}"
-echo -e "Saat login nanti, kamu harus:"
-echo -e " - Input ${GREEN}nomor Telegram${NC}"
-echo -e " - Input ${GREEN}kode OTP${NC}"
-echo -e " - Input ${GREEN}password 2FA (jika ada)${NC}"
-echo -e ""
-echo -e "${RED}⚠️ Semua input tidak akan terlihat saat diketik.${NC}"
-echo -e "Ketik langsung lalu tekan ENTER."
-echo -e ""
-echo -e "Jika sudah membaca, ketik ${CYAN}y${NC} untuk melanjutkan."
-echo -e "${MAGENTA}══════════════════════════════════════════════${NC}"
-echo -e ""
-read -p "✅ Ketik 'y' untuk melanjutkan: " confirm
-
-# =======================
-# Eksekusi sesuai pilihan
+# Execute according to choice
 # =======================
 if [[ "$confirm" =~ ^[yY]$ ]]; then
     clear
-    loading "✨ Menyiapkan Userbot"
-    sleep 0.5
-    echo -e "${GREEN}✅ Semua siap! Menjalankan Userbot...${NC}"
+    type_text "${CYAN}✨ Preparing Userbot...${NC}" 0.04
+    fancy_bar "Loading modules" 3
+    fancy_bar "Initializing bot" 2
+    type_text "${GREEN}✅ All set! Running Userbot...${NC}" 0.03
     python3 junn.py
 else
-    echo -e "${RED}❌ Dibatalkan.${NC}"
+    type_text "${RED}❌ Cancelled.${NC}" 0.03
     exit 0
 fi

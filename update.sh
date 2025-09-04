@@ -1,58 +1,76 @@
-#!/bin/bash
+# Color definitions using tput
+RED=$(tput setaf 1)
+GREEN=$(tput setaf 2)
+YELLOW=$(tput setaf 3)
+CYAN=$(tput setaf 6)
+WHITE=$(tput setaf 7)
+NC=$(tput sgr0)
 
-# ==============================
-# Color codes
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-RED='\033[0;31m'
-CYAN='\033[0;36m'
-NC='\033[0m' # No Color
-# ==============================
+# Type animation
+type_text() {
+  text="$1"
+  for ((i=0;i<${#text};i++)); do
+    echo -n "${text:$i:1}"
+    sleep 0.02
+  done
+  echo ""
+}
+
+# Loading bar for each step
+loading_bar() {
+  msg="$1"
+  duration="$2"
+  bar_size=20
+  step_sleep=$(awk "BEGIN {print $duration/$bar_size}")
+  for ((i=0;i<=bar_size;i++)); do
+    bar=$(printf "%-${i}s" "" | tr ' ' '=')
+    empty=$(printf "%-$((bar_size-i))s")
+    percent=$((i*100/bar_size))
+    echo -ne "\r${YELLOW}[!]${NC} $msg [${bar}${empty}] ${percent}%"
+    sleep $step_sleep 2>/dev/null || sleep 0.1
+  done
+  echo -ne "\r${GREEN}[√]${NC} $msg [${bar}] DONE\n"
+}
 
 clear
-echo -e "${CYAN}🔍 Checking for updates...${NC}"
+type_text "${WHITE}> Checking system status...${NC}"
+echo -e "\n${CYAN}================ [ SYSTEM STATUS ] =================${NC}"
 
-# Loading animation
-spin='⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏'
-i=0
-while git fetch origin &>/dev/null; do
-    i=$(( (i+1) %10 ))
-    printf "\r${YELLOW}⏳ Fetching updates ${spin:$i:1}${NC}"
-    sleep 0.1
-    break
-done
-echo ""
+loading_bar "Checking network connection" 2
+loading_bar "Checking Git repository" 2
+loading_bar "Checking permissions" 1
 
-# Get current branch
+echo -e "${CYAN}===================================================${NC}\n"
+
+type_text "${WHITE}> Checking for latest updates from server...${NC}"
+loading_bar "Fetching remote data" 3
+
+if ! git fetch origin &>/dev/null; then
+  echo -e "\n${RED}================== [ FETCH FAILED ] ===================${NC}"
+  type_text "${RED}> ERROR: Could not connect to remote repository.${NC}"
+  exit 1
+fi
+
 BRANCH=$(git rev-parse --abbrev-ref HEAD)
 LOCAL=$(git rev-parse HEAD)
 REMOTE=$(git rev-parse origin/$BRANCH)
 
+echo ""
 if [ "$LOCAL" = "$REMOTE" ]; then
-    echo -e "${GREEN}✅ Already up to date ($BRANCH)${NC}"
-    echo ""
-    echo -e "${CYAN}📌 Last commit:${NC}"
-    git log -1 --pretty=format:"%h | %an | %s (%cr)"
+  loading_bar "Latest Version" 5
+  echo -e "${CYAN}> Current branch: ${YELLOW}$BRANCH${NC}"
+  echo -e "${CYAN}> Last commit: ${YELLOW}$(git log -1 --pretty=%h)${NC}"
+  echo -e "${CYAN}> Commit message: \"$(git log -1 --pretty=%s)\"${NC}"
 else
-    echo -e "${YELLOW}⬇️ Update found on branch $BRANCH!${NC}"
-    echo -e "${CYAN}⚡ Pulling updates...${NC}"
-    git pull origin $BRANCH
-
-    echo ""
-    echo -e "${CYAN}📜 Files updated:${NC}"
+  loading_bar "Updating to new version" 5
+  if git pull origin $BRANCH; then
+    loading_bar "Update successful" 3
+    echo -e "${CYAN}Changed files:${NC}"
     git diff --name-only $LOCAL $REMOTE | while read file; do
-        echo -e "${GREEN}- $file${NC}"
+      echo -e "${GREEN}  + $file${NC}"
     done
-
-    echo ""
-    if [ -f "README.md" ]; then
-        echo -e "${CYAN}📖 Latest README.md preview:${NC}"
-        echo "------------------------------------"
-        cat README.md
-        echo "------------------------------------"
-    else
-        echo -e "${RED}ℹ️ No README.md found in project.${NC}"
-    fi
-
-    echo -e "${GREEN}🚀 Update complete!${NC}"
+  else
+    loading_bar "Update failed" 2
+    type_text "${RED}> ERROR: An error occurred during the update.${NC}"
+  fi
 fi
