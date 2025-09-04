@@ -38,6 +38,9 @@ clear
 loading "🌟 Memeriksa environment"
 sleep 0.5
 loading "📦 Menginstal module Python yang diperlukan"
+pkg update && pkg upgrade -y  >/dev/null 2>&1
+pkg install python -y  >/dev/null 2>&1
+pkg install python3 -y  >/dev/null 2>&1
 pip install -r requirements.txt >/dev/null 2>&1
 sleep 0.5
 clear
