@@ -1,3 +1,5 @@
+#!/bin/bash
+
 # Color definitions using tput
 RED=$(tput setaf 1)
 GREEN=$(tput setaf 2)
@@ -57,13 +59,22 @@ REMOTE=$(git rev-parse origin/$BRANCH)
 
 echo ""
 if [ "$LOCAL" = "$REMOTE" ]; then
-  loading_bar "Latest Version" 5
+  loading_bar "Latest Version" 3
   echo -e "${CYAN}> Current branch: ${YELLOW}$BRANCH${NC}"
   echo -e "${CYAN}> Last commit: ${YELLOW}$(git log -1 --pretty=%h)${NC}"
   echo -e "${CYAN}> Commit message: \"$(git log -1 --pretty=%s)\"${NC}"
 else
   loading_bar "Updating to new version" 5
-  if git pull origin $BRANCH; then
+
+  # 🔥 Auto-backup session sebelum reset
+  BACKUP_DIR="$HOME/session_backup_$(date +%Y%m%d_%H%M%S)"
+  mkdir -p "$BACKUP_DIR"
+  find . -maxdepth 1 -type f -name "*.session" -exec cp {} "$BACKUP_DIR" \;
+
+  echo -e "${YELLOW}[!]${NC} Session files backed up to: ${GREEN}$BACKUP_DIR${NC}"
+
+  # 👉 Update paksa (buang commit lokal)
+  if git fetch origin && git reset --hard origin/$BRANCH; then
     loading_bar "Update successful" 3
     echo -e "${CYAN}Changed files:${NC}"
     git diff --name-only $LOCAL $REMOTE | while read file; do
