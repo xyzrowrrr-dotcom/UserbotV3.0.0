@@ -55,10 +55,7 @@ fancy_bar "Checking Python installation" 0.5
 # Install dependencies
 # =======================
 type_text "${YELLOW}📦 Installing required modules...${NC}" 0.03
-pkg update -y >/dev/null 2>&1
-pkg upgrade -y >/dev/null 2>&1
-pkg install python -y >/dev/null 2>&1
-pkg install python3 -y >/dev/null 2>&1
+pkg install python -y
 pip install -r requirements.txt >/dev/null 2>&1
 fancy_bar "Dependencies installed" 2
 
@@ -94,7 +91,7 @@ if [[ "$confirm" =~ ^[yY]$ ]]; then
     fancy_bar "Loading modules" 3
     fancy_bar "Initializing bot" 2
     type_text "${GREEN}✅ All set! Running Userbot...${NC}" 0.03
-    python3 junn.py
+    python junn.py
 else
     type_text "${RED}❌ Cancelled.${NC}" 0.03
     exit 0
