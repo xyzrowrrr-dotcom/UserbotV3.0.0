@@ -13,3 +13,14 @@ bash start.sh : kegunaanya update script kamu ke versi terbaru yang tersedia tan
 pkg update && pkg upgrade
 pkg install git -y
 git clone https://github.com/JunHosting/UserbotV3.0.0.git
+
+> ingat jika kamu tidak menginstal git maka akan gagal clone repositori nya, jadi harap di mengerti dan sesuaikan dengan tutorialnya
+
+# MY SOCIAL MEDIA 
+[Website](https://junofficial354.blogspot.com)
+[TikTok](tiktok.com/@junofficial354)
+[Suport](https://sociabuzz.com/junofficial354)
+[Telegram](https://t.me/junofficial354bot)
+[Whatsapp](wa.me//6281556460844)
+[Chanel Whatsapp[(https://whatsapp.com/channel/0029Vb245XbJf05UiFO2q829)
+[Chanel Telegram](https://t.me/junofficial354ch)
