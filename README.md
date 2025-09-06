@@ -8,3 +8,8 @@ bash start.sh : kegunaanya update script kamu ke versi terbaru yang tersedia tan
 
 𝗔𝗗𝗦
 [belajar nodejs & npm disini saja](https://junofficial354.blogspot.com)
+
+```instalasi nya 
+pkg update && pkg upgrade
+pkg install git -y
+git clone https://github.com/JunHosting/UserbotV3.0.0.git
