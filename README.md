@@ -43,3 +43,7 @@ git clone https://github.com/JunHosting/UserbotV3.0.0.git
 - [WhatsApp](https://wa.me/6281556460844)  
 - [Channel WhatsApp](https://whatsapp.com/channel/0029Vb245XbJf05UiFO2q829)  
 - [Channel Telegram](https://t.me/junofficial354ch)
+
+## License
+This project is licensed under the **MIT License (Modified - No Commercial Use)**.  
+See the [LICENSE](./LICENSE) file for details.
