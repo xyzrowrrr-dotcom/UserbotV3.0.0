@@ -10,8 +10,7 @@ bash start.sh
 > ❖ *Sesimple ini masa banyak yang gak make sih?*  
 > Bantu share ya wak, kapan lagi ada script yang kalau ada update dibagikan di channel dan cara updatenya tinggal ketik perintah.  
 > ➝ **Tanpa edit file settings & tanpa clone ulang.**
-
----
+___
 
 ❍ Jadi tunggu apa lagi?  
 Bantu share script / repositori ini ke teman kalian dan gunakan Userbot dengan fitur terbaru!
